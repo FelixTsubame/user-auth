@@ -52,11 +52,18 @@ export class AppComponent {
       const jsonCodec = JSONCodec();
       this.userAccounts = jsonCodec.decode(msg.data) as UserAccount[];
       this.editableUsers = [...this.userAccounts]
+      for(var i = 0; i < this.editableUsers.length; i++)
+      {
+        this.editableUsers[i].systemAuthority = [...this.userAccounts[i].systemAuthority]
+      }
     })
   }
 
   onClearClick() {
-    this.editableUsers = [...this.userAccounts]
+    for(var i = 0; i < this.editableUsers.length; i++)
+    {
+      this.editableUsers[i].systemAuthority = [...this.userAccounts[i].systemAuthority]
+    }
   }
 
   onUpdateClick() {
@@ -64,6 +71,10 @@ export class AppComponent {
       return JSON.stringify(x.systemAuthority) !== JSON.stringify(this.editableUsers[idx].systemAuthority)
     })
     this.#userService.pubAppStore(this.changedUsers, 'userAccount.update')
+    for(var i = 0; i < this.editableUsers.length; i++)
+    {
+      this.userAccounts[i].systemAuthority = [...this.editableUsers[i].systemAuthority]
+    }
   }
 
   async ngOnDestroy() {
