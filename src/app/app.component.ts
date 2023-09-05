@@ -63,7 +63,7 @@ export class AppComponent {
     this.changedUsers = this.userAccounts.filter((x,idx) => {
       return JSON.stringify(x.systemAuthority) !== JSON.stringify(this.editableUsers[idx].systemAuthority)
     })
-    this.#userService.pubAppStore(this.changedUsers, 'userAccount.insert')
+    this.#userService.pubAppStore(this.changedUsers, 'userAccount.update')
   }
 
   async ngOnDestroy() {
