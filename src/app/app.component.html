@@ -52,7 +52,7 @@
           <ng-template pTemplate="body" let-user>
             <tr>
               <td>
-                user.userName
+                {{user.userName}}
               </td>
               <ng-container *ngFor="let app of appStores">
                 <td>
