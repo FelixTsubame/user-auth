@@ -10,6 +10,7 @@ import { UserService } from './user.service';
 import { Observable } from 'rxjs';
 import { JSONCodec, Msg } from '@his-base/jetstream-ws';
 import { AppStoreService } from './app-store.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-root',
@@ -51,30 +52,21 @@ export class AppComponent {
     this.userAccounts$.subscribe((msg: Msg) => {
       const jsonCodec = JSONCodec();
       this.userAccounts = jsonCodec.decode(msg.data) as UserAccount[];
-      this.editableUsers = [...this.userAccounts]
-      for(var i = 0; i < this.editableUsers.length; i++)
-      {
-        this.editableUsers[i].systemAuthority = [...this.userAccounts[i].systemAuthority]
-      }
+      this.editableUsers = _.cloneDeep(this.userAccounts)
     })
   }
 
   onClearClick() {
-    for(var i = 0; i < this.editableUsers.length; i++)
-    {
-      this.editableUsers[i].systemAuthority = [...this.userAccounts[i].systemAuthority]
-    }
+    this.editableUsers = _.cloneDeep(this.userAccounts)
   }
 
-  onUpdateClick() {
-    this.changedUsers = this.userAccounts.filter((x,idx) => {
-      return JSON.stringify(x.systemAuthority) !== JSON.stringify(this.editableUsers[idx].systemAuthority)
+  async onUpdateClick() {
+    this.changedUsers = this.editableUsers.filter((x,idx) => {
+      return JSON.stringify(x.systemAuthority) !== JSON.stringify(this.userAccounts[idx].systemAuthority)
     })
-    this.#userService.pubAppStore(this.changedUsers, 'userAccount.update')
-    for(var i = 0; i < this.editableUsers.length; i++)
-    {
-      this.userAccounts[i].systemAuthority = [...this.editableUsers[i].systemAuthority]
-    }
+    console.log(this.changedUsers);
+    await this.#userService.pubAppStore(this.changedUsers, 'userAccount.update.many')
+    this.userAccounts = _.cloneDeep(this.editableUsers)
   }
 
   async ngOnDestroy() {

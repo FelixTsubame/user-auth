@@ -9,7 +9,7 @@ export class UserService {
 
   #jetStreamWsService = inject(JetstreamWsService);
 
-  #url = 'ws://localhost:8080';
+  #url = 'ws://10.251.42.37:8080';
 
   async connect() {
     await this.#jetStreamWsService.connect(this.#url)
